@@ -91,62 +91,62 @@ class UserRegister(APIView):
                         'message': 'You sent'})
 
 
-# class StudentAPI(APIView):
-#     authentication_classes = [JWTAuthentication]
-#     permission_classes = [IsAuthenticated]
+class StudentAPI(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
-#     def get(self, request):
-#         student_objs = Student.objects.all()
-#         serializers = StudentSerializer(student_objs, many=True)
-#         print(request.user)
-#         return Response({'status':200, 'payload': serializers.data})
+    def get(self, request):
+        student_objs = Student.objects.all()
+        serializers = StudentSerializer(student_objs, many=True)
+        print(request.user)
+        return Response({'status':200, 'payload': serializers.data})
 
-#     def post(self, request):
-#         data = request.data
-#         serializers = StudentSerializer(data=request.data)
+    def post(self, request):
+        data = request.data
+        serializers = StudentSerializer(data=request.data)
 
-#         if not serializers.is_valid():
-#             return Response({'status':403, 'errors': serializers.errors})
+        if not serializers.is_valid():
+            return Response({'status':403, 'errors': serializers.errors})
 
-#         serializers.save()
-#         return Response({'status':200, 'payload': serializers.data, 'message': 'You sent'})
+        serializers.save()
+        return Response({'status':200, 'payload': serializers.data, 'message': 'You sent'})
 
-#     def put(self, request):
-#         try: 
-#             student_objs = Student.objects.get(id = request.data['id'])
-#             serializers = StudentSerializer(student_objs, data=request.data, partial=False)
+    def put(self, request):
+        try: 
+            student_objs = Student.objects.get(id = request.data['id'])
+            serializers = StudentSerializer(student_objs, data=request.data, partial=False)
 
-#             if not serializers.is_valid():
-#                 print(serializers.errors)
-#                 return Response({'status':403, 'errors': serializers.errors})
+            if not serializers.is_valid():
+                print(serializers.errors)
+                return Response({'status':403, 'errors': serializers.errors})
 
-#             serializers.save()
-#             return Response({'status':200, 'payload': serializers.data, 'message': 'updated'})
-#         except Exception as e:
-#             return Response({'status': 403, 'error': 'invalid id', 'errors': serializers.error_messages})
+            serializers.save()
+            return Response({'status':200, 'payload': serializers.data, 'message': 'updated'})
+        except Exception as e:
+            return Response({'status': 403, 'error': 'invalid id', 'errors': serializers.error_messages})
 
-#     def patch(self, request):
-#         try: 
-#             student_objs = Student.objects.get(id = request.data['id'])
-#             serializers = StudentSerializer(student_objs, data=request.data, partial=True)
+    def patch(self, request):
+        try: 
+            student_objs = Student.objects.get(id = request.data['id'])
+            serializers = StudentSerializer(student_objs, data=request.data, partial=True)
 
-#             if not serializers.is_valid():
-#                 print(serializers.errors)
-#                 return Response({'status':403, 'errors': serializers.errors})
+            if not serializers.is_valid():
+                print(serializers.errors)
+                return Response({'status':403, 'errors': serializers.errors})
 
-#             serializers.save()
-#             return Response({'status':200, 'payload': serializers.data, 'message': 'updated'})
-#         except Exception as e:
-#             return Response({'status': 403, 'error': 'invalid id', 'errors': serializers.error_messages})
+            serializers.save()
+            return Response({'status':200, 'payload': serializers.data, 'message': 'updated'})
+        except Exception as e:
+            return Response({'status': 403, 'error': 'invalid id', 'errors': serializers.error_messages})
 
-#     def delete(self, request):
-#         try:
-#             student_objs = Student.objects.get(id = request.data['id'])
-#             student_objs.delete()
-#             return Response({'status': 200, 'message': 'deleted'})
-#         except Exception as e:
-#             print(e)
-#             return Response({'status': 403, 'error': 'invalid id'})
+    def delete(self, request):
+        try:
+            student_objs = Student.objects.get(id = request.data['id'])
+            student_objs.delete()
+            return Response({'status': 200, 'message': 'deleted'})
+        except Exception as e:
+            print(e)
+            return Response({'status': 403, 'error': 'invalid id'})
 
 
 
