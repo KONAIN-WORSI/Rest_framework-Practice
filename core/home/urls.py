@@ -13,5 +13,7 @@ urlpatterns = [
     # path('student', views.post_student, name='post_student'),
     # path('update_student/<id>', views.update_student, name='update_student'),
     # path('delete_student/<id>', views.delete_student, name='delete_student'),
-    path('get_book', views.get_book, name='get_book')
+    path('get_book', views.get_book, name='get_book'),
+    path('api/job/', views.job_list, name = 'job_list'),
+    path('api/job/<int:pk>/', views.job_detail, name = 'job_detail'),
 ]

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Student, Category, Book
+from .models import Student, Category, Book, Job
 from django.contrib.auth.models import User
 
 
@@ -45,4 +45,10 @@ class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
         fields = '__all__'
-        
+
+
+class JobSerializer(serializers.ModelSerializer):
+    class Meta:
+        model  = Job
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at']
