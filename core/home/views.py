@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from .models import *
 from .serializers import *
@@ -9,7 +9,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework import generics
+from rest_framework import generics, filters, permissions
 from .helpers import save_pdf
 from django.conf import settings
 import pandas as pd
@@ -17,6 +17,12 @@ import uuid
 from django.conf import settings
 from .serializers import JobSerializer
 from rest_framework import status
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.pagination import PageNumberPagination
+from .permissions import IsRecruiterOrReadOnly
+from rest_framework.permissions import AllowAny
+from .auth_serializers import RegisterSerializer
+
 
 
 # Create your views here.
@@ -181,31 +187,49 @@ JOBS = [
         }
     ]
 
+class JobPagination(PageNumberPagination):
+    page_size = 5
+    page_size_query_param = "page_size"
+    max_page_size = 50
 
-@api_view(['GET', 'POST'])
-def job_list(request):
-    if request.method == 'GET':
-        jobs = Job.objects.all()
 
-        location = request.query_params.get('location')
+
+class JobListView(generics.ListCreateAPIView):
+    queryset = Job.objects.all()
+    serializer_class = JobSerializer
+    pagination_class = JobPagination
+    permission_classes = [IsRecruiterOrReadOnly]
+
+    filter_backends = [
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+
+    search_fields = ["title", "company", "location", "description"]
+    ordering_fields = ["created_at", "title", "company"]
+    ordering = ["-created_at"]
+
+    def get_queryset(self):
+        queryset = Job.objects.all()
+
+        location = self.request.query_params.get("location")
+        company = self.request.query_params.get("company")
 
         if location:
-            jobs = jobs.filter(location__iexact=location)
+            queryset = queryset.filter(
+                location__iexact=location.strip()
+            )
 
-        serializer = JobSerializer(jobs, many=True)
+        if company:
+            queryset = queryset.filter(
+                company__iexact=company.strip()
+            )
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    elif request.method == 'POST':
-        serializer =JobSerializer(data=request.data)
-
-        serializer.is_valid(raise_exception=True)
-
-        serializer.save()
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
+        return queryset
+    
 
 @api_view(['GET', 'PATCH', 'PUT', 'DELETE'])
+@permission_classes([IsRecruiterOrReadOnly])
 def job_detail(request, pk):
     job = get_object_or_404(Job, pk=pk)
 
@@ -227,7 +251,26 @@ def job_detail(request, pk):
     return Response(status=status.HTTP_204_NO_CONTENT)
 
       
-      
+ 
+class RegisterView(generics.CreateAPIView):
+    serializer_class = RegisterSerializer
+    permission_classes = [permissions.AllowAny]
+
+
+@api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated])
+def my_profile(request):
+    profile, created = UserProfile.objects.get_or_create(
+        user=request.user,
+        defaults={"role": UserProfile.JOB_SEEKER},
+    )
+
+    return Response({
+        "username": request.user.username,
+        "email": request.user.email,
+        "role": profile.role,
+    })
+     
 
 
 

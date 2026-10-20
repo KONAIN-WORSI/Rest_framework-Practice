@@ -9,9 +9,9 @@ from django.conf import settings
 
 # Create your models here.
 class User(AbstractUser):
-    username = None
+    username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(unique=True)
-    phone = models.CharField(max_length=10)
+    phone = models.CharField(max_length=10, blank=True, default="")
     is_email_verified = models.BooleanField(default=False)
     is_phone_verified = models.BooleanField(default=False)
     otp = models.CharField(max_length=6, null=True, blank=True)
@@ -42,6 +42,5 @@ def send_email_token(sender, instance, created, **kwargs):
             send_mail(subject, message, email_from, recipient_list)
         except Exception as e:
             print(e)
-
 
 

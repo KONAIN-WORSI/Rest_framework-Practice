@@ -52,3 +52,18 @@ class JobSerializer(serializers.ModelSerializer):
         model  = Job
         fields = '__all__'
         read_only_fields = ['id', 'created_at']
+
+    def validate_title(self, value):
+        if not value.strip():
+            raise serializers.ValidationError(
+                "Job title cannot be blank."
+            )
+        return value.strip()
+
+
+    def validate_company(self, value):
+        if not value.strip():
+            raise serializers.ValidationError(
+                "Company name cannot be blank."
+            )
+        return value.strip()

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
     
@@ -29,5 +30,33 @@ class Job(models.Model):
 
     def __str__(self):
         return f"{self.title} at {self.company} in {self.location} with skills: {', '.join(self.skill)}"
+
+
+class UserProfile(models.Model):
+    JOB_SEEKER = "job_seeker"
+    RECRUITER = "recruiter"
+
+    ROLE_CHOICES = [
+        (JOB_SEEKER, "job_seeker"),
+        (RECRUITER, "recruiter")
+    ]
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE, 
+        related_name='profile'
+    )
+
+    role = models.CharField(
+        max_length=20, 
+        choices=ROLE_CHOICES,
+        default=JOB_SEEKER
+    )
+
+    def __str__(self):
+        return f"{self.user.username} - {self.role}"
+
+
+    
 
     

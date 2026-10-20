@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from home.views import JobListView, job_detail, RegisterView, my_profile
 
 urlpatterns = [
     path('student/', views.StudentAPI.as_view()),
@@ -14,6 +15,9 @@ urlpatterns = [
     # path('update_student/<id>', views.update_student, name='update_student'),
     # path('delete_student/<id>', views.delete_student, name='delete_student'),
     path('get_book', views.get_book, name='get_book'),
-    path('api/job/', views.job_list, name = 'job_list'),
+    path('api/job/', JobListView.as_view(), name = 'job_list'),
     path('api/job/<int:pk>/', views.job_detail, name = 'job_detail'),
+
+    path("api/auth/register/", RegisterView.as_view(), name="register"),
+    path("api/auth/me/", my_profile, name="my-profile"),
 ]
