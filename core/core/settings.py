@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'home',
     'rest_framework.authtoken',
+    "rest_framework_simplejwt.token_blacklist",
     'django_filters'
 ]
 
@@ -147,6 +148,7 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 5,
     
    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.BasicAuthentication",
     ],
@@ -162,8 +164,8 @@ from datetime import timedelta
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=120),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=3),
-    "ROTATE_REFRESH_TOKENS": False,
-    "BLACKLIST_AFTER_ROTATION": False,
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": False,
 
     "ALGORITHM": "HS256",
