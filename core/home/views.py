@@ -10,12 +10,13 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics, filters, permissions
+from rest_framework_simplejwt.exceptions import TokenError
 from .helpers import save_pdf
 from django.conf import settings
 import pandas as pd
 import uuid
 from django.conf import settings
-from .serializers import JobSerializer
+from .serializers import JobSerializer, LogOutSerializer
 from rest_framework import status
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.pagination import PageNumberPagination
@@ -272,7 +273,25 @@ def my_profile(request):
     })
      
 
+class LogOutView(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def post(self, request):
+        serializer = LogOutSerializer(data=request.data)
+
+        try:
+            serializer.is_valid(raise_exception=True)
+            # serializer.save()
+        except TokenError:
+            return Response(
+                {"detail": "Invalid or expired refresh token."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return Response(
+            {"detail": "Log out successfully!"},
+            status=status.HTTP_205_RESET_CONTENT
+        )
 
 
 

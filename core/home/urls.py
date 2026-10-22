@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from home.views import JobListView, job_detail, RegisterView, my_profile
+from home.views import JobListView, job_detail, RegisterView, my_profile, LogOutView
 
 urlpatterns = [
     path('student/', views.StudentAPI.as_view()),
@@ -20,4 +20,5 @@ urlpatterns = [
 
     path("api/auth/register/", RegisterView.as_view(), name="register"),
     path("api/auth/me/", my_profile, name="my-profile"),
+    path("api/auth/logout/", LogOutView.as_view(), name="logout")
 ]

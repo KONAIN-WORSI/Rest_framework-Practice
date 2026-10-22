@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Student, Category, Book, Job
 from django.contrib.auth.models import User
-
+from rest_framework_simplejwt.serializers import TokenBlacklistSerializer
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -67,3 +67,7 @@ class JobSerializer(serializers.ModelSerializer):
                 "Company name cannot be blank."
             )
         return value.strip()
+
+
+class LogOutSerializer(TokenBlacklistSerializer):
+    pass
